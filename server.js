@@ -1,19 +1,12 @@
 var express = require('express');
 var app = express();
 var PORT = process.env.PORT || 3000;
-var todos = [{
-	id:1,
-	description:"take YoYo to see children dentist",
-	completed:false
-},{
-	id:2,
-	description:"6250 test",
-	completed: false
-},{
-	id:3,
-	description:"invisalign consultation",
-	completed:true
-}];
+var bodyParser = require('body-parser');
+
+var todos = [];
+var todoNextID = 1;
+
+app.use(bodyParser.json());
 app.get('/',function(req,res){
 	res.send("Todo API Root");
 });
@@ -45,6 +38,15 @@ app.get('/todos/:id',function(req,res){
 	// 	res.status(404).send();
 	// }
 });
+
+app.post('/todos',function(req,res){
+	var body = req.body;
+	body.id = todoNextID++;
+	todos.push(body);
+	res.json(body);
+
+});
+
 app.listen(PORT,function(){
 	console.log("Express listen on PORT" + PORT);
 });
