@@ -12,9 +12,9 @@ app.use(bodyParser.json());
 app.get('/',function(req,res){
 	res.send("Todo API Root");
 });
-app.get('/todos',function(req,res){
-	res.json(todos);
-});
+// app.get('/todos',function(req,res){
+// 	res.json(todos);
+// });
 app.get('/todos/:id',function(req,res){
 	var todoID = parseInt(req.params.id,10);
 	var matchedTodo = _.findWhere(todos,{id: todoID});
@@ -38,6 +38,23 @@ app.get('/todos/:id',function(req,res){
 		res.json(matchedTodo);
 	}else{
 		res.status(404).send();
+	}
+});
+
+app.get('/todos',function(req,res){
+	var queryParams = req.query;
+	var filteredTodos = todos;
+
+	if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'true'){
+		filteredTodos = _.where(filteredTodos,{completed:true});
+	}else if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'false'){
+		filteredTodos = _.where(filteredTodos,{completed:false});
+	}
+
+	if(filteredTodos){
+		res.json(filteredTodos);
+	}else{
+		res.status(400).send();
 	}
 });
 
